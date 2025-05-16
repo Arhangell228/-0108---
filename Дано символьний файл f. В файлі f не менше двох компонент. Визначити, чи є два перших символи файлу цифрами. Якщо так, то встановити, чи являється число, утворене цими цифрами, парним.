@@ -1,0 +1,65 @@
+using System;
+using System.IO;
+using System.Text;
+
+public class FileNumberChecker
+{
+    private readonly string _filename;
+
+    public FileNumberChecker(string filename)
+    {
+        _filename = filename;
+    }
+
+    public string CheckFirstTwoDigits()
+    {
+        try
+        {
+            using (StreamReader reader = new StreamReader(_filename))
+            {
+                char[] buffer = new char[2];
+                int charsRead = reader.Read(buffer, 0, 2);
+
+                if (charsRead < 2)
+                {
+                    return "Файл містить менше двох символів";
+                }
+
+                if (char.IsDigit(buffer[0]) && char.IsDigit(buffer[1]))
+                {
+                    string numberStr = $"{buffer[0]}{buffer[1]}";
+                    int number = int.Parse(numberStr);
+
+                    return number % 2 == 0
+                        ? $"Число {number} є парним"
+                        : $"Число {number} є непарним";
+                }
+                else
+                {
+                    return "Перші два символи не є цифрами";
+                }
+            }
+        }
+        catch (FileNotFoundException)
+        {
+            return "Файл не знайдено";
+        }
+        catch (Exception ex)
+        {
+            return $"Виникла помилка: {ex.Message}";
+        }
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.OutputEncoding = Encoding.UTF8;
+        Console.InputEncoding = Encoding.UTF8;
+
+        FileNumberChecker checker = new FileNumberChecker(@"D:\OOP_lab08\f\f.txt");
+        string result = checker.CheckFirstTwoDigits();
+        Console.WriteLine(result);
+    }
+}
